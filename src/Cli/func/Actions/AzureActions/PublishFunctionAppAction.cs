@@ -339,6 +339,17 @@ namespace Azure.Functions.Cli.Actions.AzureActions
 
             if (functionApp.IsFlex)
             {
+                if (functionApp.AzureAppSettings.ContainsKey(Constants.WebsiteRunFromPackage))
+                {
+                    throw new CliException($"Function Apps on Flex Consumption do not support '{Constants.WebsiteRunFromPackage}'. Please remove the app setting from your Function App.");
+                }
+
+                if (functionApp.AzureAppSettings.ContainsKey(Constants.DeploymentStorageConnectionString))
+                {
+                    // aka link for flex consumption deployment settings?
+                    throw new CliException($"Function App '{FunctionAppName}' is missing the '{Constants.DeploymentStorageConnectionString}' app setting. Please read the deployment configuration requirements here https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-how-to?tabs=azure-cli%2Cazure-cli-publish&pivots=programming-language-csharp#configure-deployment-settings");
+                }
+
                 if (result.ContainsKey(Constants.FunctionsWorkerRuntime))
                 {
                     await UpdateRuntimeConfigForFlex(functionApp, WorkerRuntimeLanguageHelper.GetRuntimeMoniker(workerRuntime), null, azureHelperService);
