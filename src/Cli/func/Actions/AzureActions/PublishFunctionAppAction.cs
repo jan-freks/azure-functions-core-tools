@@ -330,7 +330,9 @@ namespace Azure.Functions.Cli.Actions.AzureActions
                 }
             }
 
-            if (!functionApp.AzureAppSettings.ContainsKey(Constants.AzureWebJobsStorage) && functionApp.IsDynamic && functionApp.IsLinux)
+            if (functionApp.IsLinux &&
+                (functionApp.IsDynamic || functionApp.IsFlex) &&
+                !functionApp.AzureAppSettings.ContainsKey(Constants.AzureWebJobsStorage))
             {
                 throw new CliException($"Function App '{FunctionAppName}' is missing the '{Constants.AzureWebJobsStorage}' app setting. Please read the deployment configuration requirements here https://aka.ms/deployfromurl");
             }
